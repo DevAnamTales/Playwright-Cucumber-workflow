@@ -132,3 +132,37 @@ export async function cheatIfNeeded(world) {
     }
   }
 }
+export const sectionClassMap = {
+  'health': 'health',
+  'money': 'money',
+  'espressos': 'espressocups',
+  'bag': 'bag',
+};
+
+export async function getValues(world, sectionName) {
+  const sectionClass = sectionClassMap[sectionName.toLowerCase()];
+  const sectionElement = await world.get(`section.${sectionClass}`);
+  // If the section is not found, throw an error
+  if (!sectionElement) {
+    throw new Error(`Section with class ${sectionClass} not found.`);
+  }
+
+  // For the "bag" section, get the text from <span class="bag-content">
+  if (sectionName.toLowerCase() === 'bag') {
+    const bagContentElement = await sectionElement.locator('span.bag-content span');
+
+    // Wait for the element to appear, then retrieve its text
+    await bagContentElement.waitFor({ timeout: 5000 }); // Set a wait timeout for the element
+    return await bagContentElement.textContent(); // Retrieve the text
+  }
+
+  // For other sections, locate the value within <div class="progress .val">
+  const valueElement = await sectionElement.locator('div.progress .val');
+
+  // Wait for the element to appear, then retrieve its text
+  await valueElement.waitFor({ timeout: 5000 });
+  const valueText = await valueElement.textContent();
+
+  // For all sections except "bag", return the numerical value
+  return parseFloat(valueText);
+}

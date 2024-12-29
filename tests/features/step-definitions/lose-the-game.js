@@ -12,11 +12,11 @@ Given('that I have started the game by navigating to {string}', async function (
   await this.getWait('.choices ul li:nth-child(2)', 1000);
 });
 
-Given('that I navigated to the position {string}', async function (to) {
+Given('I navigated to the position {string}', async function (to) {
   await navigateTo(this, to);
 });
 
-Given('that my position is {string}', async function (position) {
+Given('my position is {string}', async function (position) {
   expect(await getWhereIAm(this)).to.equal(position);
 });
 
